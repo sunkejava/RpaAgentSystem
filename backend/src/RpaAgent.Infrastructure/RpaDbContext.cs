@@ -23,7 +23,7 @@ public sealed class RpaDbContext(DbContextOptions<RpaDbContext> options) : DbCon
     {
         b.Entity<Tenant>().HasIndex(x => x.Name);
         b.Entity<TenantMember>().HasIndex(x => new {x.TenantId,x.Subject}).IsUnique();
-        b.Entity<DeviceLease>().HasIndex(x => x.UsbDeviceId).IsUnique().HasFilter("\\\"Status\\\" = 'Active'");
+        b.Entity<DeviceLease>().HasIndex(x => x.UsbDeviceId).IsUnique().HasFilter("\"Status\" = 'Active'");
         b.Entity<Company>().HasIndex(x => x.CreditCode).IsUnique();
         b.Entity<TenantCompany>().HasIndex(x => new {x.TenantId,x.CompanyId}).IsUnique();
         b.Entity<GovernmentSystem>().HasIndex(x => x.Code).IsUnique();
