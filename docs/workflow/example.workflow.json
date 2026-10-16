@@ -1,0 +1,61 @@
+{
+  "dslVersion": "1.0",
+  "code": "SI_EMPLOYEE_ADD_DEMO",
+  "name": "社保增员示例（模拟）",
+  "nodes": [
+    {
+      "id": "start",
+      "type": "start"
+    },
+    {
+      "id": "validate",
+      "type": "tool",
+      "tool": "business.validate"
+    },
+    {
+      "id": "auth",
+      "type": "subflow",
+      "workflowRef": "auth.social-insurance"
+    },
+    {
+      "id": "submit",
+      "type": "tool",
+      "tool": "business.submit",
+      "retryPolicy": {
+        "maxAttempts": 1
+      },
+      "approvalPolicy": "require-when-production"
+    },
+    {
+      "id": "verify",
+      "type": "tool",
+      "tool": "business.reconcile"
+    },
+    {
+      "id": "end",
+      "type": "end"
+    }
+  ],
+  "edges": [
+    {
+      "from": "start",
+      "to": "validate"
+    },
+    {
+      "from": "validate",
+      "to": "auth"
+    },
+    {
+      "from": "auth",
+      "to": "submit"
+    },
+    {
+      "from": "submit",
+      "to": "verify"
+    },
+    {
+      "from": "verify",
+      "to": "end"
+    }
+  ]
+}
