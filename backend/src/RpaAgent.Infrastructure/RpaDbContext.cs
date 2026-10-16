@@ -4,6 +4,7 @@ namespace RpaAgent.Infrastructure;
 public sealed class RpaDbContext(DbContextOptions<RpaDbContext> options) : DbContext(options)
 {
     public DbSet<Tenant> Tenants => Set<Tenant>();
+    public DbSet<TenantMember> TenantMembers => Set<TenantMember>();
     public DbSet<Company> Companies => Set<Company>();
     public DbSet<TenantCompany> TenantCompanies => Set<TenantCompany>();
     public DbSet<GovernmentSystem> GovernmentSystems => Set<GovernmentSystem>();
@@ -21,6 +22,8 @@ public sealed class RpaDbContext(DbContextOptions<RpaDbContext> options) : DbCon
     protected override void OnModelCreating(ModelBuilder b)
     {
         b.Entity<Tenant>().HasIndex(x => x.Name);
+        b.Entity<TenantMember>().HasIndex(x => new {x.TenantId,x.Subject}).IsUnique();
+        b.Entity<DeviceLease>().HasIndex(x => x.UsbDeviceId).IsUnique().HasFilter("\\\"Status\\\" = 'Active'");
         b.Entity<Company>().HasIndex(x => x.CreditCode).IsUnique();
         b.Entity<TenantCompany>().HasIndex(x => new {x.TenantId,x.CompanyId}).IsUnique();
         b.Entity<GovernmentSystem>().HasIndex(x => x.Code).IsUnique();
