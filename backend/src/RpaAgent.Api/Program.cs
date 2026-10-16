@@ -37,5 +37,5 @@ if (app.Environment.IsDevelopment()) app.MapOpenApi();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapGet("/health", () => Results.Ok(new { status = "ok" }));
-app.MapCompanyEndpoints();
+// Company endpoints are pending security review and integration.
 app.Run();
