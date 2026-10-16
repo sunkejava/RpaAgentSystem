@@ -1,0 +1,7 @@
+<Project>
+  <ItemGroup Condition="'$(MSBuildProjectName)' == 'RpaAgent.Infrastructure'">
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)../database/001_initial.sql" LogicalName="RpaAgent.Migrations.001_initial.sql" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)../database/002_tenant_members.sql" LogicalName="RpaAgent.Migrations.002_tenant_members.sql" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)../database/003_tenant_rls.sql" LogicalName="RpaAgent.Migrations.003_tenant_rls.sql" />
+  </ItemGroup>
+</Project>
