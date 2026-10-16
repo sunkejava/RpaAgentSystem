@@ -1,0 +1,46 @@
+name: Database Migration & Tenant Isolation
+on:
+  push:
+    paths:
+      - 'backend/**'
+      - '.github/workflows/database-ci.yml'
+  pull_request:
+    paths:
+      - 'backend/**'
+      - '.github/workflows/database-ci.yml'
+jobs:
+  database:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: test-only
+          POSTGRES_DB: rpaagent_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d rpaagent_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      RPA_MIGRATION_CONNECTION: Host=localhost;Port=5432;Database=rpaagent_test;Username=postgres;Password=test-only
+      PGPASSWORD: test-only
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Build
+        run: dotnet build backend/src/RpaAgent.Api/RpaAgent.Api.csproj -c Release
+      - name: Install EF tool
+        run: dotnet tool install --global dotnet-ef --version 10.0.0
+      - name: Apply EF migration
+        run: dotnet ef database update --project backend/src/RpaAgent.Infrastructure/RpaAgent.Infrastructure.csproj --startup-project backend/src/RpaAgent.Api/RpaAgent.Api.csproj
+      - name: Check tenant isolation
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq postgresql-client
+          psql -h localhost -U postgres -d rpaagent_test -v ON_ERROR_STOP=1 -f backend/tests/sql/tenant_rls.sql
