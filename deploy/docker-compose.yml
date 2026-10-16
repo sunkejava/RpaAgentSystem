@@ -1,0 +1,13 @@
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: rpaagent
+      POSTGRES_USER: rpaagent
+      POSTGRES_PASSWORD: change-me
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - rpa_pgdata:/var/lib/postgresql/data
+volumes:
+  rpa_pgdata:
